@@ -50,7 +50,6 @@ export default function App() {
     }
 
     getlastState().then((s)=>{
-
       if(s){
         if(s!=lastState){
           setlastState(s)
@@ -58,13 +57,14 @@ export default function App() {
         if(s?.user){
           setLoggedIn(1)
 
-        }else{
-          signIn()
         }
+      }else{
+        signIn()
       }
-    })
+  })
 
   },[loggedIn]);
+
 
   return(
     <SafeAreaView style={styles.safe}>
