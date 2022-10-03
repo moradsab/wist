@@ -53,6 +53,7 @@ const possibleReqs=(reqs)=>{
 }
 
 const BankRequest=({bank,reqs,team,setReq,newRequest})=>{
+    const [take,setTake]=useState(0)
     const notTake=()=>{
         if(reqs[team.op1]=='pass' & reqs[team.op2]=='pass'){
             newRequest()
