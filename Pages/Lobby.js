@@ -116,7 +116,7 @@ export default function Lobby({lastState}){
     }
 
     return(
-      <View>
+      <View style={{backgroundColor:'white'}}>
         {status==="not entered"?
           <View>
             <Join setroom={setroom} user={user} setplayerkey={setplayerkey} restart={restart}/>
