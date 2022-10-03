@@ -28,7 +28,6 @@ export default function Join({setroom,user,setplayerkey,restart}) {
                     }
                     const key=searchkey()
                     if(key<4){
-                        console.log(key,room,"hhh")
                         room.players["client_"+key.toString()]={id: user}
                         room.data.nop++
                         if(room.data.nop==4){
