@@ -19,7 +19,7 @@ const HandCard =({item,throwCard,canThrow}) => {
     }
 
     return(
-        <View style={styles.card}>
+        <View style={{backgroundColor:'white'}}>
             {(canThrow=="all" || canThrow==item.suits)?
                 <TouchableOpacity style={styles.card} onPress={()=>throwCard(item.index) }>
                 <Text style={[styles.suit,{color: color(item.suits)}]}>{suits[item.suits]}</Text>
