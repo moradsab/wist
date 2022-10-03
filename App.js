@@ -1,117 +1,94 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState,useEffect} from 'react';
+import { View, StyleSheet, SafeAreaView,Text, ActivityIndicator } from "react-native";
+import {signInAnonymously } from "firebase/auth";
+import { auth } from './Components/database';
+import Lobby from './Pages/Lobby';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LogBox } from 'react-native';
+import {ref} from 'firebase/database';
+import { database } from './Components/database.js';
+import useJSON from './Components/useJSON';
+LogBox.ignoreLogs(["AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage"]);
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+export default function App() {
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const[loggedIn,setLoggedIn]=useState(0)
+  const [lastState,setlastState]=useState(null)
+  const [connection]=useJSON(ref(database,".info/connected"))
+  const [connected,setconnected]=useState(0)
 
-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
- * LTI update could not be added via codemod */
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+  useEffect(()=>{
+    if(connection){
+      if(connection==true){
+        setconnected(1)
+      }else{
+        setconnected(0)
+      }
+    }else(setconnected(0))
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  },[connected,connection])
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  useEffect(()=>{
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    const getlastState = async  () => {
+      const jsonValue = await AsyncStorage.getItem('@storage_Key')
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    }
+
+    const storelastState = async(value) => {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@storage_Key', jsonValue)
+    }
+
+    const signIn=async()=>{
+      await signInAnonymously(auth).then((u)=>{
+        if(u){
+          storelastState({user: u.user.uid})
+          setlastState({user: u.user.uid})
+          setLoggedIn(1)
+      }})
+    }
+
+    getlastState().then((s)=>{
+
+      if(s){
+        if(s!=lastState){
+          setlastState(s)
+        }
+        if(s?.user){
+          setLoggedIn(1)
+
+        }else{
+          signIn()
+        }
+      }
+    })
+
+  },[loggedIn]);
+
+  return(
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.container} >
+        {loggedIn && connected ?<Lobby lastState={lastState} />
+        :
+        <View>
+          <ActivityIndicator style={{alignSelf:'center'}} size='large' color='black'/>
+          <Text  style={{fontSize: 20,fontWeight:'900',color:"black",alignSelf:'center'}}>Check your connection</Text>
         </View>
-      </ScrollView>
+        }
+      </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row'
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  safe: {
+    flex: 1
+  }
 });
-
-export default App;
