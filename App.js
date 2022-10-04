@@ -72,8 +72,7 @@ export default function App() {
         {loggedIn && connected ?<Lobby lastState={lastState} />
         :
         <View>
-          <ActivityIndicator style={{alignSelf:'center'}} size='large' color='black'/>
-          <Text  style={{fontSize: 20,fontWeight:'900',color:"black",alignSelf:'center'}}>Check your connection</Text>
+          <ActivityIndicator animation={true} style={{alignSelf:'center'}} size='large' color='black'/>
         </View>
         }
       </View>
