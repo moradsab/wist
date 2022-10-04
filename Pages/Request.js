@@ -53,52 +53,34 @@ const possibleReqs=(reqs)=>{
 }
 
 const BankRequest=({bank,reqs,team,setReq,newRequest})=>{
-    const [take,setTake]=useState(0)
-    const notTake=()=>{
-        if(reqs[team.op1]=='pass' & reqs[team.op2]=='pass'){
+
+    const pass=()=>{
+        if(reqs[team.op1]=='pass' && reqs[team.op2]=='pass' && reqs[team.mate]=='pass'){
             newRequest()
             return null
         }else{
-            if(reqs[team.op1]>reqs[team.op2]){
-                return team.op1
-            }else{
-                return team.op2
+            max=7
+            var maxplayer=''
+            for(var player in reqs){
+                if(Number(reqs[player]) && reqs[player]>=max){
+                    max=Number(reqs[player])
+                    maxplayer=player
+                 }
             }
+            setReq(maxplayer)
         }
-    
     }
     
     return(
         <View>
-            {take?
-            <View>
-                <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>Start</Text>
-                <View style={{flexDirection:'row'}}>
-                    <TouchableOpacity onPress={()=>setReq(bank)} style={{height:37,width:55,borderColor: "black",borderWidth: 2,marginLeft:5,borderRadius:20,alignItems:'center'}}>
-                        <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>You</Text>
-                    </TouchableOpacity>
-                    {reqs[team.mate]==maxReq(reqs)?
-                    <View>
-                        <TouchableOpacity onPress={()=>setReq(team.mate)} style={{height:37,width:55,borderColor: "black",borderWidth: 2,marginLeft:10,borderRadius:20,alignItems:'center'}}>
-                            <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>Mate</Text>
-                        </TouchableOpacity>
-                    </View>:null}
-                </View>
+            <View style={{flexDirection:'row'}}>
+                <TouchableOpacity onPress={()=>setReq(bank)} style={{height:37,width:55,borderColor: "black",borderWidth: 2,marginLeft:5,borderRadius:20,alignItems:'center'}}>
+                    <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>Take</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>pass()} style={{height:37,width:55,borderColor: "black",borderWidth: 2,marginLeft:5,borderRadius:20,alignItems:'center'}}>
+                    <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>Pass</Text>
+                </TouchableOpacity>
             </View>
-            :
-            <View>
-                <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>You want to play</Text>
-                <View style={{flexDirection:'row'}}>
-                    <TouchableOpacity onPress={()=>setTake(1)} style={{height:37,width:55,borderColor: "black",borderWidth: 2,marginLeft:10,borderRadius:20,alignItems:'center'}}>
-                        <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>Yes</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>setReq(notTake())} style={{height:37,width:55,borderColor: "black",borderWidth: 2,marginLeft:5,borderRadius:20,alignItems:'center'}}>
-                        <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center',alignContent:'center'}}>No</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            }
         </View>
     )
 }

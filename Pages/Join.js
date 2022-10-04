@@ -10,7 +10,7 @@ const storelastState = async(value) => {
 
 export default function Join({setroom,user,setplayerkey,restart}) {
     const [play,setPlay]=useState(1)
-    async function Join(roomName){
+    async function JoinRoom(roomName){
         const roomRef=ref(database,"Rooms/"+roomName)
 
         if(roomRef){
@@ -68,7 +68,7 @@ export default function Join({setroom,user,setplayerkey,restart}) {
         setPlay(0)
         await get(query(query(ref(database,'Rooms/'),orderByChild('data/status')),equalTo('queuing'))).then((snap)=>{
             if(snap.exists()){
-                Join(Object.keys(snap.val())[0].toString())
+                JoinRoom(Object.keys(snap.val())[0].toString())
             }else{
                 Create()
             }

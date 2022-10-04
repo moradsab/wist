@@ -1,5 +1,5 @@
 import React,{ useEffect} from 'react';
-import {  ref, set,onValue} from "firebase/database";
+import {  ref, set,onValue, onDisconnect, increment} from "firebase/database";
 import { database } from '../Components/database';
 import {Text,View,TouchableOpacity ,StyleSheet, ActivityIndicator} from "react-native";
 import { deckArray } from '../Components/CardsDeck';
@@ -16,7 +16,33 @@ const divideDeck=()=>{
     }
     return dividedDeck;
   }
-export default function Wait({playerkey , room ,isallready, data ,exitroom }) {
+export default function Wait({playerkey , room ,isallready, data ,exitroom ,restart}) {
+
+
+    useEffect(()=>{
+        if(!data){
+            restart()
+        }
+    },[data])
+
+    useEffect(()=>{
+        onDisconnect(ref(database,"Rooms/"+room+"/players/"+playerkey+"/connected")).set(false)
+    },[room,playerkey])
+    
+    useEffect(()=>{
+        if(room && playerkey){
+        onValue(ref(database,"Rooms/"+room+"/players/"),shot=>{
+            const val=shot.val();
+            for(var i in val){
+                if(val[i]?.connected===false)
+                    set(ref(database,"Rooms/"+room+"/players/"+i),null).then(
+                        set(ref(database,"Rooms/"+room+"/data/nop"),increment(-1))
+                    )
+            }
+        }, {
+            onlyOnce: true
+          });}
+    },[room])
 
 
     useEffect(()=>{
@@ -45,10 +71,11 @@ export default function Wait({playerkey , room ,isallready, data ,exitroom }) {
                     if(val[i].ready===true)
                         ready_count++;
                 }
+
                 if(ready_count===4){
                     newDeck()
                     initgame()
-                }
+                }else{console.log('lam')}
             }, {
                 onlyOnce: true
               });
@@ -63,9 +90,9 @@ export default function Wait({playerkey , room ,isallready, data ,exitroom }) {
             <Text style={{fontSize: 24,fontWeight:'bold',color:"black",alignSelf:'center'}}>Waiting for other players</Text>
             <View style={{flexDirection:'row',alignSelf:'center'}}>
                 <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center'}}>{data? (data?.nop-1).toString():null} {data?" joined":null}</Text>
-                <ActivityIndicator style={{marginLeft:10}} color='black'/>
+                <ActivityIndicator animating={true} style={{marginLeft:10}} color='black'/>
             </View>
-            <TouchableOpacity style={styles.cancelButton} onPress={exitroom}>
+            <TouchableOpacity style={styles.cancelButton} onPress={()=>exitroom()}>
                 <Text style={{fontSize: 18,fontWeight:'bold',color:"black",alignSelf:'center'}}>Cancel</Text>
             </TouchableOpacity>
         </View>

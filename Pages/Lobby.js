@@ -1,10 +1,11 @@
 import React, {useState,useEffect} from 'react';
 import { View } from "react-native";
 import Join from './Join';
+import {searchRoom} from './Join';
 import Wait from './Wait';
 import useJSON from '../Components/useJSON';
 import { database } from '../Components/database';
-import {ref, set,increment,remove, get, query, equalTo} from "firebase/database";
+import {ref, set,increment,remove, get, query,onValue, equalTo} from "firebase/database";
 import Game from './Game'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -47,14 +48,13 @@ export default function Lobby({lastState}){
     const [data] = useJSON(ref(database, "Rooms/"+room+"/data/"));
     const [playerkey , setplayerkey] = useState("");
 
-
-
     const restart=()=>{
       setstatus("not entered");
       setroom("");
-      setallready(0);
       setplayerkey("");
     }
+
+    useEffect(()=>{restart()},[])
   
     useEffect(()=>{
 
@@ -68,7 +68,7 @@ export default function Lobby({lastState}){
       }
       getlastState().then((state)=>{
         if(lastState!=state){
-          if(state?.room && state?.playerkey){
+          if(state?.room && state?.playerkey && state?.status=='started'){
             get(query(ref(database,"Rooms/"+state.room))).then((snap)=>{
               if(snap.exists() ){
                 setroom(state.room)
@@ -78,7 +78,7 @@ export default function Lobby({lastState}){
                 restart()
               }
             })
-          }else{restart()}
+          }
         }
       })
     },[room,playerkey,isallready,status,lastState]);
@@ -103,16 +103,28 @@ export default function Lobby({lastState}){
         }
       }
     },[data,status,room]);
+
+    useEffect(()=>{
+      if(room){
+        onValue(ref(database,"Rooms/"+room),shot=>{
+          if(!shot.exists()){
+            restart()
+          }
+        }, {
+          onlyOnce: true
+        });}
+
+    },[room])
   
     const exitroom=async()=>{
-      await storelastState({user:lastState.user})
-      restart()
-      if(data?.nop==1){
+      if(data?.nop<=1){
         await remove(ref(database,"Rooms/"+room));
-      }else{
+      }else if (room){
         await set(ref(database,"Rooms/"+room+"/data/nop"), increment(-1));
         await remove(ref(database,"Rooms/"+room+"/players/"+playerkey));
       }
+      await storelastState({user:lastState.user})
+      restart()
     }
 
     return(
@@ -125,7 +137,7 @@ export default function Lobby({lastState}){
           <View>
             <View>
               {(status==="queuing" || status==="isallready")?
-              <Wait playerkey={playerkey} room={room} data={data} isallready={isallready} exitroom={exitroom}/>
+              <Wait playerkey={playerkey} room={room} data={data} isallready={isallready} exitroom={exitroom} restart={restart} />
               :null}
               {
                 status==="started"?
