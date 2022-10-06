@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     },
     tableContainer: {
       flexDirection: 'row',
-      marginLeft:200,
+      marginLeft:150,
       height:130,
       padding:10,
       alignItems:'center',
