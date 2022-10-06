@@ -75,7 +75,7 @@ export default function Wait({playerkey , room ,isallready, data ,exitroom ,rest
                 if(ready_count===4){
                     newDeck()
                     initgame()
-                }else{console.log('lam')}
+                }
             }, {
                 onlyOnce: true
               });
