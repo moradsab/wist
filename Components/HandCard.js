@@ -12,7 +12,7 @@ const suits={
 const HandCard =({item,throwCard,canThrow}) => {
 
     const color=(suit)=>{
-        if(suit=='H'||suit=='C'){
+        if(suit=='H'||suit=='D'){
             return 'red'
         }
         return 'black'
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderWidth: 2,
         borderRadius: 10,
-        margin: 5,
+        margin: 4,
         opacity: 1,
         flex: 1
     },
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderWidth: 2,
         borderRadius: 10,
-        margin: 5,
+        margin: 4,
         opacity: 0.5,
         flex: 1
     },
