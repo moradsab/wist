@@ -10,6 +10,12 @@ A serverless, cross-platform multiplayer card game for playing **Wist** with fri
 
 Wist is an online multiplayer card game app that lets four players enjoy the popular card game "Wist" together virtually, without the need for a physical deck. The app is built using Google Firebase for real-time updates and React Native to work on both Android and iOS. This project provides a simple and fun way for card game lovers to play anytime, anywhere, while staying connected.
 
+---
+
+![Wist Screenshot](./wist_screenshot.png)
+
+---
+
 ## 🎯 Features  
 - 🃏 **Real-time multiplayer gameplay** for 4 players  
 - 🔄 **Serverless architecture** with Firebase Realtime Database  
