@@ -1,6 +1,6 @@
 ![Wist Logo](https://img.icons8.com/color/96/000000/cards.png)
 
-# Wist - Online Multiplayer Card Game  
+# Wist - Online Moile Multiplayer Card Game  
 [![React Native](https://img.shields.io/badge/React%20Native-0.69-blue)](https://reactnative.dev/)  
 [![Firebase](https://img.shields.io/badge/Firebase-Realtime%20Database-orange)](https://firebase.google.com/)  
 
