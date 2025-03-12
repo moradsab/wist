@@ -14,6 +14,8 @@ Wist is an online multiplayer card game app that lets four players enjoy the pop
 
 ![Wist Screenshot](./wist_screenshot.png)
 
+![Preview](/preview.gif)
+
 ---
 
 ## 🎯 Features  
